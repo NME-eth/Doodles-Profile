@@ -5,4 +5,4 @@ client/node_modules/
 server/node_modules/
 
 # server config
-server/.env
+server/getNFTMetadata/.env
