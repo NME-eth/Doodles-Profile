@@ -1,0 +1,8 @@
+# client's node module
+client/node_modules/
+
+# server node modules
+server/node_modules/
+
+# server config
+server/.env
