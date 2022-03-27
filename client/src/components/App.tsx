@@ -1,7 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { address, abi } from '../utils/contractInfo.json';
+import axios from 'axios';
+import { doodlesAddr, sDoodlesAddr } from '../utils/contractInfo.json';
 import Layout from './Layout';
 import theme from '../theme';
 import Header from './Header';
@@ -18,11 +18,36 @@ function App(): React.ReactNode {
     setAccount(newAccount);
     try {
       // setting the doodles balance
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-      const contract = new ethers.Contract(address, abi, provider);
-      console.log(newAccount);
-      const ownerBalance = parseInt(await contract.balanceOf(newAccount), 10);
-      setBalance(ownerBalance);
+      console.log([doodlesAddr, sDoodlesAddr]);
+      const inventory = axios.get(
+        'http://localhost:8888/getNFTMetadata/getBalance', 
+        {
+          params: {
+            owner: newAccount,
+            contracts: [doodlesAddr, sDoodlesAddr],
+          },
+        },
+      ).then( async response => {
+        const idList = response.data;
+
+        // setting balance state
+        setBalance(idList.length);
+
+        // setting inventory state
+        await axios.get(
+          'http://localhost:8888/getNFTMetadata/getTokens',
+          {
+            params: {
+              contract: doodlesAddr,
+              idList,
+            }
+          }
+        ).then( res => setInventory(res.data));
+      }
+      );
+
+      console.log(inventory);
+      
     } catch (err) {
       setErrorMessage('There was an error connecting to MetaMask');
     }
