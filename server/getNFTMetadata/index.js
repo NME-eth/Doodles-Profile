@@ -8,12 +8,12 @@ const web3 = alchemy.createAlchemyWeb3(
 );
 
 router.get('/getBalance', async (req, res) => {
-  const contract = req.query.contract;
+  const contracts = JSON.parse(req.query.contract);
   const owner = req.query.owner;
 
   const response = await web3.alchemy.getNfts({
     owner,
-    contractAddresses: typeof contract === 'string' ? [contract] : contract,
+    contractAddresses: contracts,
     withMetadata: false,
   });
 
@@ -24,8 +24,7 @@ router.get('/getBalance', async (req, res) => {
 
 router.get('/getTokens', async (req, res) => {
   const contract = req.query.contract;
-  const rawToken = req.query.id;
-  const idList = typeof rawToken === 'string' ? [rawToken] : rawToken;
+  const idList = JSON.parse(req.query.ids);
 
   let metadataList = [];
   // using normal loop incase we get rate limited
