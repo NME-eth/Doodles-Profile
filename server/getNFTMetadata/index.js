@@ -39,9 +39,13 @@ router.get('/getTokens', async (req, res) => {
       name: response.metadata.name,
       id: idList[i],
       image: response.tokenUri.gateway,
-      attributes: response.metadata.attributes,
+      attributes: response.metadata.attributes.map(({value, trait_type: traitType}) => {
+        return {value, traitType}
+      }),
     };
   }
+
+  console.log(metadataList[0].attributes);
   res.json(metadataList);
 })
 
